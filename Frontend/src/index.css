@@ -1,0 +1,155 @@
+@import "tailwindcss";
+
+@theme {
+  /* Furniture store palette — WINTER: deep frost blue + ice + snow */
+  --color-brand: #12324f;        /* deep winter blue */
+  --color-brand-dark: #0b2239;   /* midnight frost */
+  --color-brand-light: #24507a;  /* glacial blue */
+  --color-gold: #8ecae6;         /* ice / frost accent */
+  --color-gold-dark: #5fa8c9;    /* deeper ice */
+  --color-cream: #eaf2fa;        /* snow white (cool) */
+  --color-ink: #0f2233;          /* cold navy text */
+
+  --font-display: "Playfair Display", Georgia, serif;
+  --font-sans: "Inter", system-ui, sans-serif;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background: var(--color-cream);
+  color: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Tailwind ke saath MUI clash na kare */
+* {
+  box-sizing: border-box;
+}
+
+/* Buttons par hand cursor (native default arrow hota hai) */
+button,
+[role='button'],
+a[href] {
+  cursor: pointer;
+}
+
+button:disabled,
+[aria-disabled='true'] {
+  cursor: not-allowed;
+}
+
+/* ===== Animations ===== */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(0.7);
+  }
+  60% {
+    transform: scale(1.12);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes floaty {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+/* Cards/sections smoothly upar aayen */
+.fade-up {
+  animation: fadeUp 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Badge / button me chhota pop */
+.pop {
+  animation: pop 0.35s ease both;
+}
+
+/* Halka float (hero ya icons ke liye) */
+.floaty {
+  animation: floaty 4s ease-in-out infinite;
+}
+
+/* Cart icon jab item add ho */
+@keyframes cartBump {
+  0% {
+    transform: scale(1);
+  }
+  30% {
+    transform: scale(1.3) rotate(-10deg);
+  }
+  60% {
+    transform: scale(0.92);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.cart-bump {
+  animation: cartBump 0.45s ease;
+}
+
+/* ===== Winter: snowfall ===== */
+@keyframes snowfall {
+  0% {
+    transform: translateY(-10vh) translateX(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(110vh) translateX(24px);
+    opacity: 0;
+  }
+}
+
+.snow-flake {
+  position: absolute;
+  top: -10px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #ffffff 0%, #cfe8f5 60%, rgba(207, 232, 245, 0) 100%);
+  filter: blur(0.4px);
+  animation-name: snowfall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+/* Frost gradient (hero / banners) */
+.frost-gradient {
+  background:
+    radial-gradient(1200px 400px at 50% -20%, rgba(142, 202, 230, 0.35), transparent 70%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.6), rgba(234, 242, 250, 0));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fade-up,
+  .pop,
+  .floaty,
+  .cart-bump,
+  .snow-flake {
+    animation: none;
+  }
+}
