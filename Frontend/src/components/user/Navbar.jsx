@@ -1,5 +1,5 @@
-// ===== Navbar - MUI AppBar + login state + cart =====
-import { useEffect, useRef, useState } from 'react'
+// ===== Navbar - MUI AppBar + login state + wishlist =====
+import { useState } from 'react'
 import { Link as RouterLink, useNavigate } from 'react-router-dom'
 import AppBar from '@mui/material/AppBar'
 import Toolbar from '@mui/material/Toolbar'
@@ -24,20 +24,7 @@ export default function Navbar() {
   const [anchorEl, setAnchorEl] = useState(null) // avatar dropdown
   const [cartOpen, setCartOpen] = useState(false)
   const [wishOpen, setWishOpen] = useState(false)
-  const [cartBump, setCartBump] = useState(false)
   const navigate = useNavigate()
-
-  // Cart count badhne par icon ko bounce karo
-  const prevCount = useRef(count)
-  useEffect(() => {
-    if (count > prevCount.current) {
-      setCartBump(true)
-      const t = setTimeout(() => setCartBump(false), 500)
-      prevCount.current = count
-      return () => clearTimeout(t)
-    }
-    prevCount.current = count
-  }, [count])
 
   const handleLogout = () => {
     logout()
@@ -84,6 +71,13 @@ export default function Navbar() {
             Home
           </Button>
 
+          {/* Order history - sirf login users ko */}
+          {user && (
+            <Button component={RouterLink} to="/orders" sx={{ color: '#fff' }}>
+              Orders
+            </Button>
+          )}
+
           <IconButton sx={iconSx} aria-label="Search">
             <span className="material-symbols-outlined">search</span>
           </IconButton>
@@ -106,9 +100,7 @@ export default function Navbar() {
             onClick={() => setCartOpen(true)}
           >
             <Badge badgeContent={count} color="secondary" overlap="circular">
-              <span className={`material-symbols-outlined ${cartBump ? 'cart-bump' : ''}`}>
-                shopping_cart
-              </span>
+              <span className="material-symbols-outlined">shopping_cart</span>
             </Badge>
           </IconButton>
 

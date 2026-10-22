@@ -19,6 +19,9 @@ const theme = createTheme({
   },
 })
 
+// Cart ab backend me hai - purana localStorage wala data saaf karo
+localStorage.removeItem('antiqor_cart')
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <ThemeProvider theme={theme}>

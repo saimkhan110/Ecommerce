@@ -57,3 +57,17 @@ export const getProduct = (id) => api.get(`/products/${id}`);
 export const createProduct = (formData) => api.post('/products', formData);
 export const updateProduct = (id, formData) => api.put(`/products/${id}`, formData);
 export const deleteProduct = (id) => api.delete(`/products/${id}`);
+
+// ---------- CART ----------
+// Sab cart APIs token maangte hain (protected)
+export const getCart = () => api.get('/cart');
+export const addToCart = (data) => api.post('/cart/add', data); // { productId, quantity }
+export const updateCartItem = (productId, quantity) => api.put(`/cart/${productId}`, { quantity });
+export const removeCartItem = (productId) => api.delete(`/cart/${productId}`);
+export const clearCart = () => api.delete('/cart/clear');
+
+// ---------- ORDER ----------
+export const placeOrder = (data) => api.post('/orders', data); // { shippingAddress, paymentMethod }
+export const getMyOrders = () => api.get('/orders');
+export const getOrderById = (id) => api.get(`/orders/${id}`);
+export const cancelOrder = (id) => api.put(`/orders/${id}/cancel`);

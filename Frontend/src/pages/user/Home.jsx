@@ -1,4 +1,4 @@
-// ===== User Home - categories + products grid + add to cart =====
+// ===== User Home - categories + products grid + wishlist =====
 import { useEffect, useState } from 'react'
 import { Link as RouterLink } from 'react-router-dom'
 import Box from '@mui/material/Box'
@@ -52,11 +52,14 @@ export default function Home() {
       ? products
       : products.filter((p) => p.category === activeCat)
 
-  const handleAdd = (product) => {
-    addToCart(product)
-    setToast(`"${product.name}" added to cart ✨`)
+  const handleAdd = async (product) => {
+    try {
+      await addToCart(product)
+      setToast(`"${product.name}" added to cart ✨`)
+    } catch (err) {
+      setToast(err.response?.data?.message || 'Could not add to cart')
+    }
   }
-
   const handleWishlist = (product) => {
     const wasSaved = isWishlisted(product._id)
     toggleWishlist(product)
@@ -257,11 +260,12 @@ export default function Home() {
                     fullWidth
                     variant="contained"
                     onClick={() => handleAdd(product)}
+                    disabled={product.stock <= 0}
                     startIcon={
                       <span className="material-symbols-outlined">add_shopping_cart</span>
                     }
                   >
-                    Add to Cart
+                    {product.stock > 0 ? 'Add to Cart' : 'Out of Stock'}
                   </Button>
                 </Box>
               </Card>
@@ -270,7 +274,7 @@ export default function Home() {
         )}
       </Box>
 
-      {/* Add to cart feedback */}
+      {/* Cart / wishlist feedback */}
       <Snackbar
         open={!!toast}
         autoHideDuration={2000}

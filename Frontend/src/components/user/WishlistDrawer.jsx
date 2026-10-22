@@ -6,7 +6,6 @@ import Typography from '@mui/material/Typography'
 import IconButton from '@mui/material/IconButton'
 import Button from '@mui/material/Button'
 import Snackbar from '@mui/material/Snackbar'
-import Alert from '@mui/material/Alert'
 import { useWishlist } from '../../context/WishlistContext'
 import { useCart } from '../../context/CartContext'
 import { imageUrl } from '../../services/api'
@@ -16,10 +15,14 @@ export default function WishlistDrawer({ open, onClose }) {
   const { addToCart } = useCart()
   const [toast, setToast] = useState('')
 
-  const moveToCart = (item) => {
-    addToCart(item, 1)
-    removeFromWishlist(item._id)
-    setToast(`"${item.name}" moved to cart ✨`)
+  const moveToCart = async (item) => {
+    try {
+      await addToCart(item, 1)
+      removeFromWishlist(item._id)
+      setToast(`"${item.name}" moved to cart ✨`)
+    } catch (err) {
+      setToast(err.response?.data?.message || 'Could not move to cart')
+    }
   }
 
   return (
@@ -116,7 +119,7 @@ export default function WishlistDrawer({ open, onClose }) {
                           </span>
                         }
                       >
-                        Add to Cart
+                        Move to Cart
                       </Button>
                     </Box>
                   </Box>

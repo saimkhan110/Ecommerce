@@ -21,6 +21,7 @@ export default function ProductDetail() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [qty, setQty] = useState(1)
+  const [adding, setAdding] = useState(false)
   const [toast, setToast] = useState('')
 
   useEffect(() => {
@@ -40,9 +41,16 @@ export default function ProductDetail() {
     }
   }, [id])
 
-  const handleAdd = () => {
-    addToCart(product, qty)
-    setToast(`"${product.name}" added to cart ✨`)
+  const handleAdd = async () => {
+    setAdding(true)
+    try {
+      await addToCart(product, qty)
+      setToast(`"${product.name}" added to cart ✨`)
+    } catch (err) {
+      setToast(err.response?.data?.message || 'Could not add to cart')
+    } finally {
+      setAdding(false)
+    }
   }
 
   const handleWishlist = () => {
@@ -187,9 +195,16 @@ export default function ProductDetail() {
                 variant="contained"
                 size="large"
                 onClick={handleAdd}
-                startIcon={<span className="material-symbols-outlined">add_shopping_cart</span>}
+                disabled={adding}
+                startIcon={
+                  adding ? (
+                    <CircularProgress size={18} color="inherit" />
+                  ) : (
+                    <span className="material-symbols-outlined">add_shopping_cart</span>
+                  )
+                }
               >
-                Add to Cart
+                {adding ? 'Adding...' : 'Add to Cart'}
               </Button>
 
               <Button

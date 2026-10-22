@@ -1,62 +1,97 @@
-// ===== Cart Context - localStorage me cart save (backend cart API nahi hai) =====
-import { createContext, useContext, useEffect, useState } from 'react'
+// ===== Cart Context - backend /api/cart se live cart =====
+// Pehle localStorage me tha, ab cart MongoDB me user ke saath tied hai.
+// Har response me poora cart aata hai, isliye setCart se hi UI update hota hai.
+import { createContext, useCallback, useContext, useEffect, useState } from 'react'
+import {
+  getCart,
+  addToCart as apiAddToCart,
+  updateCartItem as apiUpdateCartItem,
+  removeCartItem as apiRemoveCartItem,
+  clearCart as apiClearCart,
+} from '../services/api'
+import { useAuth } from './AuthContext'
 
 const CartContext = createContext(null)
-const STORAGE_KEY = 'antiqor_cart'
+const EMPTY_CART = { items: [], totalPrice: 0 }
 
 export function CartProvider({ children }) {
-  // Page reload pe bhi cart bana rahe
-  const [items, setItems] = useState(() => {
-    try {
-      return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []
-    } catch {
-      return []
+  const { token } = useAuth()
+  const [cart, setCart] = useState(EMPTY_CART)
+  const [loading, setLoading] = useState(false)
+
+  // Cart server se laao - sirf tab jab login ho
+  const refresh = useCallback(async () => {
+    if (!token) {
+      setCart(EMPTY_CART)
+      return null
     }
-  })
+    try {
+      setLoading(true)
+      const { data } = await getCart()
+      setCart(data.cart || EMPTY_CART)
+      return data.cart
+    } catch {
+      // Cart fetch fail ho to UI khali rahega - page crash nahi hoga
+      setCart(EMPTY_CART)
+      return null
+    } finally {
+      setLoading(false)
+    }
+  }, [token])
 
+  // Login/logout par cart refresh
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(items))
-  }, [items])
+    refresh()
+  }, [refresh])
 
-  // Add (already ho to qty badhao)
-  const addToCart = (product, qty = 1) => {
-    setItems((prev) => {
-      const found = prev.find((i) => i._id === product._id)
-      if (found) {
-        return prev.map((i) =>
-          i._id === product._id ? { ...i, qty: i.qty + qty } : i
-        )
-      }
-      return [
-        ...prev,
-        {
-          _id: product._id,
-          name: product.name,
-          price: product.price,
-          image: product.image,
-          category: product.category,
-          qty,
-        },
-      ]
-    })
+  // ===== Add to cart =====
+  // Backend har response me poora cart deta hai - wahi set kar do
+  const addToCart = async (product, quantity = 1) => {
+    if (!token) throw new Error('Please login to add items to your cart')
+    const { data } = await apiAddToCart({ productId: product._id, quantity })
+    setCart(data.cart)
+    return data
   }
 
-  const removeFromCart = (id) =>
-    setItems((prev) => prev.filter((i) => i._id !== id))
+  // ===== Quantity update (replace, add nahi) =====
+  const updateQty = async (productId, quantity) => {
+    const { data } = await apiUpdateCartItem(productId, quantity)
+    setCart(data.cart)
+    return data
+  }
 
-  const updateQty = (id, qty) =>
-    setItems((prev) =>
-      prev.map((i) => (i._id === id ? { ...i, qty: Math.max(1, qty) } : i))
-    )
+  // ===== Item remove =====
+  const removeItem = async (productId) => {
+    const { data } = await apiRemoveCartItem(productId)
+    setCart(data.cart)
+    return data
+  }
 
-  const clearCart = () => setItems([])
+  // ===== Poora cart khaali =====
+  const clearCart = async () => {
+    const { data } = await apiClearCart()
+    setCart(data.cart)
+    return data
+  }
 
-  const count = items.reduce((sum, i) => sum + i.qty, 0)
-  const total = items.reduce((sum, i) => sum + i.price * i.qty, 0)
+  const items = cart.items || []
+  const count = items.reduce((sum, i) => sum + i.quantity, 0)
+  const total = cart.totalPrice || 0
 
   return (
     <CartContext.Provider
-      value={{ items, addToCart, removeFromCart, updateQty, clearCart, count, total }}
+      value={{
+        items,
+        count,
+        total,
+        cart,
+        loading,
+        addToCart,
+        updateQty,
+        removeItem,
+        clearCart,
+        refresh,
+      }}
     >
       {children}
     </CartContext.Provider>
