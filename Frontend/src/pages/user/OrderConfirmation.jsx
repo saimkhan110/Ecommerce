@@ -69,10 +69,21 @@ export default function OrderConfirmation() {
   const addr = order.shippingAddress || {}
 
   return (
-    <Box sx={{ maxWidth: 900, mx: 'auto', px: 3, py: 6 }}>
+    <Box sx={{ maxWidth: 900, mx: 'auto', px: 3, py: 6 }} className="fade-up">
       {justPlaced && (
-        <Alert severity="success" variant="filled" sx={{ mb: 3 }}>
-          Order placed successfully ✨ Thank you for shopping with us!
+        <Alert
+          severity="success"
+          variant="filled"
+          icon={<span className="material-symbols-outlined">check_circle</span>}
+          className="scale-in"
+          sx={{
+            mb: 4,
+            borderRadius: 2,
+            fontWeight: 600,
+            '& .MuiAlert-message': { display: 'flex', alignItems: 'center', gap: 1 },
+          }}
+        >
+          Order placed successfully! 🎉 Thank you for shopping with us!
         </Alert>
       )}
 

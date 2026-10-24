@@ -182,7 +182,21 @@ export default function Checkout() {
             variant="contained"
             size="large"
             disabled={placing}
-            sx={{ mt: 3 }}
+            className={placing ? '' : 'pop'}
+            sx={{
+              mt: 3,
+              borderRadius: 2,
+              py: 1.5,
+              fontWeight: 600,
+              transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+              '&:hover': {
+                transform: 'translateY(-2px)',
+                boxShadow: '0 12px 30px -10px rgba(18, 50, 79, 0.4)',
+              },
+              '&:active': {
+                transform: 'translateY(0)',
+              },
+            }}
             startIcon={
               placing ? (
                 <CircularProgress size={18} color="inherit" />
