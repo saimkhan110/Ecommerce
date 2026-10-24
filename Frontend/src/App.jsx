@@ -20,6 +20,7 @@ import Register from './pages/user/Register.jsx'   // naya auth page
 import Dashboard from './pages/admin/Dashboard.jsx'
 import ManageCategories from './pages/admin/ManageCategories.jsx'
 import ManageProducts from './pages/admin/ManageProducts.jsx'
+import ManageOrders from './pages/admin/ManageOrders.jsx'
 
 export default function App() {
   // AuthProvider se poora app cover - taake useAuth() har jagah kaam kare
@@ -55,6 +56,7 @@ export default function App() {
                   <Route index element={<Dashboard />} />
                   <Route path="categories" element={<ManageCategories />} />
                   <Route path="products" element={<ManageProducts />} />
+                  <Route path="orders" element={<ManageOrders />} />
                 </Route>
               </Route>
 

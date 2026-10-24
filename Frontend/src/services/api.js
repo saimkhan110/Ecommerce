@@ -71,3 +71,6 @@ export const placeOrder = (data) => api.post('/orders', data); // { shippingAddr
 export const getMyOrders = () => api.get('/orders');
 export const getOrderById = (id) => api.get(`/orders/${id}`);
 export const cancelOrder = (id) => api.put(`/orders/${id}/cancel`);
+// Admin
+export const getAllOrdersAdmin = () => api.get('/orders/admin/all');
+export const updateOrderStatusAdmin = (id, status) => api.put(`/orders/admin/${id}/status`, { status });

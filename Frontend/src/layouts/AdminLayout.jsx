@@ -6,6 +6,7 @@ const links = [
   { to: '/admin', end: true, label: 'Dashboard', icon: 'dashboard' },
   { to: '/admin/categories', label: 'Categories', icon: 'category' },
   { to: '/admin/products', label: 'Products', icon: 'inventory_2' },
+  { to: '/admin/orders', label: 'Orders', icon: 'receipt_long' },
 ]
 
 export default function AdminLayout() {

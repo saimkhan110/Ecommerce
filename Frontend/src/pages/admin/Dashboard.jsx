@@ -4,20 +4,21 @@ import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import Typography from '@mui/material/Typography'
-import { getProducts, getCategories } from '../../services/api.js'
+import { getProducts, getCategories, getAllOrdersAdmin } from '../../services/api.js'
 
 export default function Dashboard() {
-  const [stats, setStats] = useState({ products: '—', categories: '—' })
+  const [stats, setStats] = useState({ products: '—', categories: '—', orders: '—' })
 
   useEffect(() => {
     let active = true
     ;(async () => {
       try {
-        const [p, c] = await Promise.all([getProducts(), getCategories()])
+        const [p, c, o] = await Promise.all([getProducts(), getCategories(), getAllOrdersAdmin()])
         if (active) {
           setStats({
             products: p.data.total ?? (p.data.data || []).length,
             categories: c.data.total ?? (c.data.data || []).length,
+            orders: o.data.count ?? (o.data.orders || []).length,
           })
         }
       } catch {
@@ -32,7 +33,7 @@ export default function Dashboard() {
   const cards = [
     { label: 'Categories', value: stats.categories },
     { label: 'Products', value: stats.products },
-    { label: 'Orders', value: '—' },
+    { label: 'Orders', value: stats.orders },
   ]
 
   return (
